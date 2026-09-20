@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050406">
+<title>Mia</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪷</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#050406;
+    --night-2:#0d0a10;
+    --ember:#e5202f;
+    --ember-deep:#9d0f1c;
+    --lotus:#ffb8d1;
+    --moon:#efe8f7;
+    --mist:#cfc4dc;
+    --gold:#ffd08a;
+    --script:'Pinyon Script','Snell Roundhand','Brush Script MT',cursive;
+    --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:1.28rem;
+    line-height:1.6;
+    color:var(--mist);
+    background:radial-gradient(ellipse 90% 60% at 50% 0%,#1c0b13 0%,var(--night) 62%) fixed,var(--night);
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #flies{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+  #lantern{
+    position:fixed;left:0;top:0;width:360px;height:360px;margin:-180px 0 0 -180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(229,32,47,.16),transparent 66%);
+    pointer-events:none;z-index:0;opacity:0;transition:opacity .6s
+  }
+  main{position:relative;z-index:1;max-width:580px;margin:0 auto;padding:0 22px 80px}
+  h1,h2{font-family:var(--script);font-weight:400;color:var(--moon);text-shadow:0 0 28px rgba(229,32,47,.45);line-height:1.1}
+
+  /* hero */
+  .hero{padding:56px 0 30px;text-align:center}
+  .name{font-size:clamp(5.2rem,26vw,8rem)}
+  .tag{font-style:italic;color:var(--mist);margin-top:2px}
+  .lily-wrap{margin:14px auto 0;width:min(430px,100%)}
+  #lily{width:100%;height:auto;display:block;overflow:visible}
+  .petal{cursor:pointer;outline:none}
+  .petal .hit{fill:none;stroke:transparent;stroke-width:46;stroke-linecap:round;pointer-events:stroke}
+  .po{fill:none;stroke:var(--ember-deep);stroke-width:10;stroke-linecap:round;transition:stroke .3s}
+  .pi{fill:none;stroke:#ff5561;stroke-width:3;stroke-linecap:round;opacity:.7;transition:stroke .3s,opacity .3s}
+  .petal.on .po{stroke:var(--ember);filter:url(#glow)}
+  .petal.on .pi{stroke:#ffd6da;opacity:1}
+  .petal:focus-visible .po{stroke:#ff6b78}
+  @media (hover:hover){.petal:hover .po{stroke:#c9182a}}
+  .stamen{fill:none;stroke:#ff4655;stroke-width:2.4;stroke-linecap:round;pointer-events:none}
+  .anther{fill:var(--gold);pointer-events:none;opacity:0;animation:fade .7s forwards}
+  .draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.9s cubic-bezier(.3,.7,.2,1) forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{to{opacity:1}}
+  .halo{animation:breathe 6s ease-in-out infinite;transform-origin:200px 200px}
+  @keyframes breathe{50%{opacity:.55;transform:scale(1.08)}}
+
+  .panel{min-height:9.2rem;margin-top:8px;padding:0 4px}
+  .panel h2{font-size:2.4rem;transition:opacity .25s}
+  .panel p{margin-top:6px;transition:opacity .25s;max-width:30ch;margin-left:auto;margin-right:auto}
+  .panel.swap h2,.panel.swap p{opacity:0}
+  .done{min-height:2.6rem;margin-top:10px;font-style:italic;color:var(--lotus);opacity:0;transition:opacity 1s}
+  .done.show{opacity:1}
+
+  /* lotus + princesses */
+  .pond{padding:70px 0 20px;text-align:center}
+  .lotus-wrap{width:min(400px,100%);margin:0 auto 10px}
+  #lotus{width:100%;height:auto;display:block;overflow:visible}
+  .ripple{fill:none;stroke:rgba(255,184,209,.5);stroke-width:1.5;transform-box:fill-box;transform-origin:center;opacity:0;animation:ripple 6s ease-out infinite}
+  @keyframes ripple{0%{transform:scale(.3);opacity:.6}100%{transform:scale(1.15);opacity:0}}
+  .pond h2{font-size:clamp(2.5rem,10vw,3.4rem)}
+  .lede{font-style:italic;margin-top:8px}
+  .princesses{list-style:none;margin:30px auto 0;text-align:left;max-width:34rem}
+  .princesses li{padding:17px 0;border-top:1px solid rgba(255,184,209,.16)}
+  .princesses li:last-child{border-bottom:1px solid rgba(255,184,209,.16)}
+  .who{font-style:italic;font-weight:600;color:var(--lotus)}
+  .crown{margin-top:26px;font-style:italic;color:var(--moon);text-align:center}
+
+  /* letter */
+  .letter-sec{padding:80px 0 10px;text-align:center}
+  .sticker{width:130px;height:auto;display:block;margin:0 auto -18px;position:relative;z-index:2;cursor:pointer;animation:bob 4.5s ease-in-out infinite;background:none;border:0;padding:0}
+  .sticker:focus-visible{outline:2px solid var(--lotus);outline-offset:6px;border-radius:20px}
+  @keyframes bob{50%{transform:translateY(-7px)}}
+  .heartbeat{transform-box:fill-box;transform-origin:center;animation:beat 1.6s ease-in-out infinite}
+  @keyframes beat{50%{transform:scale(1.22)}}
+  .letter{
+    text-align:left;background:linear-gradient(180deg,#120d16,var(--night-2));
+    border:1px solid rgba(255,184,209,.22);border-radius:4px 26px 4px 26px;
+    padding:46px 28px 34px;box-shadow:0 0 60px rgba(229,32,47,.12)
+  }
+  .letter p{font-style:italic;font-size:1.34rem;margin-bottom:1.05em;color:#e3d9ee}
+  .letter .to{font-family:var(--script);font-style:normal;font-size:2.3rem;color:var(--moon);margin-bottom:.3em}
+  .letter .from{font-family:var(--script);font-style:normal;font-size:2.4rem;color:var(--moon);text-align:right;margin:.3em 0 0}
+  .letter .small{font-size:1.1rem;color:var(--mist)}
+
+  footer{text-align:center;font-style:italic;color:#8a7f99;padding-top:54px;font-size:1.05rem}
+  .heart-pop{position:fixed;pointer-events:none;z-index:30;color:#ff4d6d;font-size:22px;animation:pop 1.3s ease-out forwards}
+  @keyframes pop{from{opacity:1;transform:translate(-50%,0) scale(.7)}to{opacity:0;transform:translate(calc(-50% + var(--dx)),-90px) scale(1.3)}}
+
+  @media (max-width:420px){
+    body{font-size:1.2rem}
+    .letter{padding:44px 20px 30px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    .draw{stroke-dashoffset:0}
+    .anther{opacity:1}
+    #flies,#lantern{display:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="flies" aria-hidden="true"></canvas>
+<div id="lantern" aria-hidden="true"></div>
+
+<main>
+
+  <!-- HERO: the spider lily -->
+  <header class="hero">
+    <h1 class="name">Mia</h1>
+    <p class="tag">a small midnight garden, grown for you</p>
+
+    <div class="lily-wrap">
+      <svg id="lily" viewBox="0 0 400 500" role="group" aria-label="A red spider lily with six petals you can touch">
+        <defs>
+          <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#e5202f" stop-opacity=".38"/>
+            <stop offset="1" stop-color="#e5202f" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="4" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="panel" id="panel" aria-live="polite">
+      <h2 id="pTitle">Touch a petal</h2>
+      <p id="pText">There are six. Each one is something true about you.</p>
+    </div>
+    <div class="done" id="done">That's all six. There's more, but it wouldn't fit in one flower.</div>
+  </header>
+
+  <!-- POND: the lotus + princesses -->
+  <section class="pond">
+    <div class="lotus-wrap">
+      <svg id="lotus" viewBox="0 0 400 270" role="img" aria-label="A pink lotus resting on dark water">
+        <defs>
+          <radialGradient id="lglow" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="#ffb8d1" stop-opacity=".35"/>
+            <stop offset="1" stop-color="#ffb8d1" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="pf" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#ff9fc2"/>
+            <stop offset="1" stop-color="#fff2f7"/>
+          </linearGradient>
+          <linearGradient id="pb" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#e57aa3"/>
+            <stop offset="1" stop-color="#ffd5e5"/>
+          </linearGradient>
+        </defs>
+        <circle cx="200" cy="130" r="150" fill="url(#lglow)"/>
+        <ellipse cx="200" cy="215" rx="190" ry="36" fill="#0b0b12" stroke="rgba(255,255,255,.06)"/>
+        <ellipse class="ripple" cx="200" cy="215" rx="150" ry="26" style="animation-delay:0s"/>
+        <ellipse class="ripple" cx="200" cy="215" rx="150" ry="26" style="animation-delay:2s"/>
+        <ellipse class="ripple" cx="200" cy="215" rx="150" ry="26" style="animation-delay:4s"/>
+        <ellipse cx="72" cy="222" rx="46" ry="12" fill="#0c261b"/>
+        <ellipse cx="335" cy="208" rx="38" ry="10" fill="#0c261b"/>
+        <g id="lotusPetals" transform="translate(200,205)"></g>
+      </svg>
+    </div>
+
+    <h2>Better than every Disney princess</h2>
+    <p class="lede">I did the research. Thoroughly.</p>
+
+    <ul class="princesses">
+      <li><span class="who">Cinderella</span> needed a fairy godmother and a midnight deadline. You just walk in and it's already magic.</li>
+      <li><span class="who">Belle</span> loved a good book. You're a better story than any of them.</li>
+      <li><span class="who">Ariel</span> gave up her voice to be noticed. You never had to. The way you talk does it on its own.</li>
+      <li><span class="who">Rapunzel</span> had the hair. You have the hair and everything else.</li>
+      <li><span class="who">Jasmine</span> had a tiger. You have a personality that could win one over.</li>
+    </ul>
+    <p class="crown">No offence to the royal families. The crown goes to you.</p>
+  </section>
+
+  <!-- LETTER -->
+  <section class="letter-sec">
+    <button class="sticker" id="sticker" aria-label="A blushing little face. Tap for hearts.">
+      <svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe94a"/>
+            <stop offset=".55" stop-color="#ffbf4a"/>
+            <stop offset="1" stop-color="#ff9a86"/>
+          </linearGradient>
+          <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
+          <path id="h" d="M0 9 C-16 -4 -9 -18 0 -9 C9 -18 16 -4 0 9Z"/>
+        </defs>
+        <ellipse cx="110" cy="150" rx="88" ry="34" fill="#ff6f8a" opacity=".45" filter="url(#soft)"/>
+        <ellipse cx="110" cy="102" rx="86" ry="74" fill="url(#skin)" stroke="#2a1208" stroke-width="4"/>
+        <path d="M46 62 C40 78 44 92 50 96 C56 88 54 72 46 62Z" fill="#ffb02e" stroke="#2a1208" stroke-width="2.5"/>
+        <path d="M174 62 C180 78 176 92 170 96 C164 88 166 72 174 62Z" fill="#ffb02e" stroke="#2a1208" stroke-width="2.5"/>
+        <ellipse cx="78" cy="108" rx="27" ry="33" fill="#6d2230"/>
+        <ellipse cx="142" cy="108" rx="27" ry="33" fill="#6d2230"/>
+        <ellipse cx="78" cy="118" rx="20" ry="16" fill="#c4526a" opacity=".55"/>
+        <ellipse cx="142" cy="118" rx="20" ry="16" fill="#c4526a" opacity=".55"/>
+        <circle cx="69" cy="94" r="10" fill="#fff"/>
+        <circle cx="133" cy="94" r="10" fill="#fff"/>
+        <circle cx="88" cy="121" r="4" fill="#fff" opacity=".85"/>
+        <circle cx="152" cy="121" r="4" fill="#fff" opacity=".85"/>
+        <ellipse cx="60" cy="150" rx="17" ry="9" fill="#ff5f86" opacity=".55"/>
+        <ellipse cx="160" cy="150" rx="17" ry="9" fill="#ff5f86" opacity=".55"/>
+        <use href="#h" class="heartbeat" x="22" y="34" fill="#f0263a" stroke="#7a0b17" stroke-width="1.5"/>
+        <use href="#h" class="heartbeat" x="196" y="52" fill="#f0263a" stroke="#7a0b17" stroke-width="1.5" style="animation-delay:.5s"/>
+        <use href="#h" class="heartbeat" x="14" y="118" fill="#f0263a" stroke="#7a0b17" stroke-width="1.5" style="animation-delay:1s"/>
+      </svg>
+    </button>
+
+    <article class="letter" aria-label="A note for Mia">
+      <p class="to">Mia,</p>
+      <p>Some people are pretty. Some are kind. Some are funny. It's rare to meet someone who is all of it, and doesn't even try.</p>
+      <p>Your hair, your eyes, the way you talk, the whole wonderful personality of you. It's honestly unfair to everyone else.</p>
+      <p>I built this garden with spider lilies and lotus because I know they're your favourites, and because you deserve to hear all this in a place that feels like you.</p>
+      <p class="small">No reply needed. I'm just glad you exist, and glad I get to know you.</p>
+      <p class="from">Andy</p>
+    </article>
+  </section>
+
+  <footer>Made with a lot of care, for Mia</footer>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (name, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  /* ---------- the spider lily ---------- */
+  const lily = $('#lily');
+  const S = [200, 205];
+  const rad = d => d * Math.PI / 180;
+  const vec = off => {
+    const a = rad(-90 + off);
+    return { d: [Math.cos(a), Math.sin(a)], n: [-Math.sin(a), Math.cos(a)] };
+  };
+  const pt = (v, along, curl, side) => [
+    S[0] + v.d[0] * along + v.n[0] * curl * side,
+    S[1] + v.d[1] * along + v.n[1] * curl * side
+  ];
+  const f = p => p.map(n => n.toFixed(1)).join(' ');
+
+  // stem + halo
+  mk('path', { d: 'M200 210 C 194 300, 208 400, 200 495', stroke: '#16301f', 'stroke-width': 7, fill: 'none', 'stroke-linecap': 'round' }, lily);
+  mk('circle', { cx: 200, cy: 200, r: 170, fill: 'url(#halo)', class: 'halo' }, lily);
+
+  const petalData = [
+    { off: -118, len: 118, title: 'Your hair',           text: 'The kind of hair people notice first and keep noticing.' },
+    { off: -72,  len: 142, title: 'Your eyes',           text: 'They say everything before you do, and somehow it is always the best part.' },
+    { off: -28,  len: 132, title: 'The way you talk',    text: 'It is its own kind of music. Even small things sound worth remembering.' },
+    { off: 28,   len: 132, title: 'Your personality',    text: 'Warm, real, and completely you. There is no copy of it anywhere.' },
+    { off: 72,   len: 142, title: 'Your smile',          text: 'It changes the weather. Bad day, long week, and suddenly it is fine.' },
+    { off: 118,  len: 118, title: 'All of you',          text: 'Not one thing. All of it, together. That is the whole point.' }
+  ];
+
+  const petalEls = petalData.map((p, i) => {
+    const v = vec(p.off), side = p.off < 0 ? -1 : 1;
+    const c1 = pt(v, p.len * .35, -14, side);
+    const c2 = pt(v, p.len * .8, 26, side);
+    const end = pt(v, p.len, 44, side);
+    const d = `M${f(S)} C${f(c1)} ${f(c2)} ${f(end)}`;
+    const g = mk('g', { class: 'petal', tabindex: 0, role: 'button', 'aria-label': p.title, 'data-i': i }, lily);
+    mk('path', { d, class: 'hit' }, g);
+    const delay = (0.3 + i * 0.12) + 's';
+    const po = mk('path', { d, class: 'po draw', pathLength: 1 }, g);
+    const pi = mk('path', { d, class: 'pi draw', pathLength: 1 }, g);
+    po.style.animationDelay = pi.style.animationDelay = delay;
+    return g;
+  });
+
+  // stamens, the long curling ones
+  const stamens = [[-64, 150], [-36, 172], [-10, 190], [10, 190], [36, 172], [64, 150]];
+  stamens.forEach(([off, len], i) => {
+    const v = vec(off), side = off < 0 ? -1 : 1;
+    const c1 = pt(v, len * .45, 10, side);
+    const c2 = pt(v, len * .85, -12, side);
+    const end = pt(v, len, -42, side);
+    const path = mk('path', { d: `M${f(S)} C${f(c1)} ${f(c2)} ${f(end)}`, class: 'stamen draw', pathLength: 1 }, lily);
+    path.style.animationDelay = (1.1 + i * 0.1) + 's';
+    const a = mk('circle', { cx: end[0].toFixed(1), cy: end[1].toFixed(1), r: 4, class: 'anther' }, lily);
+    a.style.animationDelay = (2.6 + i * 0.08) + 's';
+  });
+  mk('circle', { cx: S[0], cy: S[1], r: 8, fill: '#4a0a10', 'pointer-events': 'none' }, lily);
+
+  // interaction
+  const panel = $('#panel'), pTitle = $('#pTitle'), pText = $('#pText'), done = $('#done');
+  const seen = new Set();
+  let swapTimer;
+  function pick(i) {
+    petalEls.forEach((g, k) => g.classList.toggle('on', k === i));
+    panel.classList.add('swap');
+    clearTimeout(swapTimer);
+    swapTimer = setTimeout(() => {
+      pTitle.textContent = petalData[i].title;
+      pText.textContent = petalData[i].text;
+      panel.classList.remove('swap');
+    }, reduce ? 0 : 220);
+    seen.add(i);
+    if (seen.size === petalData.length) done.classList.add('show');
+  }
+  petalEls.forEach((g, i) => {
+    g.addEventListener('click', () => pick(i));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(i); }
+    });
+  });
+
+  /* ---------- the lotus ---------- */
+  const lp = $('#lotusPetals');
+  const shape = 'M0 0 C-30 -36 -28 -86 0 -122 C28 -86 30 -36 0 0Z';
+  const rows = [
+    { a: [-78, 78],  s: .86, fill: 'url(#pb)', o: .9 },
+    { a: [-52, 52],  s: .96, fill: 'url(#pb)', o: .95 },
+    { a: [-28, 28],  s: 1.04, fill: 'url(#pf)', o: 1 },
+    { a: [-8, 8],    s: 1.1,  fill: 'url(#pf)', o: 1 }
+  ];
+  rows.forEach(r => r.a.forEach(a => {
+    mk('path', {
+      d: shape, fill: r.fill, opacity: r.o,
+      stroke: 'rgba(255,255,255,.4)', 'stroke-width': 1,
+      transform: `rotate(${a}) scale(${r.s})`
+    }, lp);
+  }));
+  mk('ellipse', { cx: 0, cy: -4, rx: 26, ry: 7, fill: '#ffd08a', opacity: .9 }, lp);
+
+  /* ---------- sticker hearts ---------- */
+  $('#sticker').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement('span');
+      h.className = 'heart-pop';
+      h.textContent = '♥';
+      h.style.left = (r.left + r.width / 2 + (Math.random() - .5) * 60) + 'px';
+      h.style.top = (r.top + r.height / 2) + 'px';
+      h.style.setProperty('--dx', (Math.random() - .5) * 80 + 'px');
+      h.style.animationDelay = i * 0.08 + 's';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1700);
+    }
+  });
+
+  /* ---------- lantern that follows the pointer ---------- */
+  if (!reduce) {
+    const lan = $('#lantern');
+    addEventListener('pointermove', e => {
+      lan.style.opacity = 1;
+      lan.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+    }, { passive: true });
+    addEventListener('pointerleave', () => { lan.style.opacity = 0; });
+  }
+
+  /* ---------- fireflies ---------- */
+  if (!reduce) {
+    const cv = $('#flies'), cx = cv.getContext('2d');
+    let W, H, dpr, bugs = [];
+    const size = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    size(); addEventListener('resize', size);
+    const N = 34;
+    for (let i = 0; i < N; i++) {
+      bugs.push({
+        x: Math.random(), y: Math.random(),
+        r: 1.2 + Math.random() * 2.2,
+        sp: .00005 + Math.random() * .00012,
+        ph: Math.random() * 6.28,
+        col: Math.random() > .35 ? '255,208,138' : '255,90,100'
+      });
+    }
+    let t = 0;
+    (function loop() {
+      if (!document.hidden) {
+        t += 16;
+        cx.clearRect(0, 0, W, H);
+        for (const b of bugs) {
+          b.y -= b.sp * 16; if (b.y < -.05) { b.y = 1.05; b.x = Math.random(); }
+          const x = (b.x + Math.sin(t * .0006 + b.ph) * .03) * W;
+          const y = b.y * H;
+          const a = .2 + .5 * (.5 + .5 * Math.sin(t * .002 + b.ph));
+          const g = cx.createRadialGradient(x, y, 0, x, y, b.r * 4.5);
+          g.addColorStop(0, `rgba(${b.col},${a})`);
+          g.addColorStop(1, `rgba(${b.col},0)`);
+          cx.fillStyle = g;
+          cx.beginPath(); cx.arc(x, y, b.r * 4.5, 0, 6.283); cx.fill();
+        }
+      }
+      requestAnimationFrame(loop);
+    })();
+  }
+})();
+</script>
+</body>
+</html>
